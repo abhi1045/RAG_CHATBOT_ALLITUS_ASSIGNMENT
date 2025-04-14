@@ -1,46 +1,34 @@
-import asyncio
-import logging
 import os
 
 import streamlit as st
 from dotenv import load_dotenv
 from langchain.chains import RetrievalQA
 from langchain_chroma import Chroma
-from langchain_community.embeddings import (
-    OpenAIEmbeddings,
-)
-from langchain_community.llms import OpenAI
-from langchain_huggingface import HuggingFaceEmbeddings
-
-logging.basicConfig(level=logging.DEBUG)
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from openai import RateLimitError
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-USE_OPENAI = os.getenv("USE_OPENAI", "True").lower() == "true"
+USE_OPENAI = os.getenv("USE_OPENAI", "False").lower() == "true"
 CHROMA_PATH = "chroma_db"
 
 
 def get_embeddings():
-    if USE_OPENAI and OPENAI_API_KEY:
-        return OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-    else:
+    try:
+        if USE_OPENAI and OPENAI_API_KEY:
+            return OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+        else:
+            return HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    except RateLimitError:
+        st.warning("OpenAI quota exceeded. Switching to HuggingFace embeddings.")
         return HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
 
 @st.cache_resource
 def load_rag_chain():
     embeddings = get_embeddings()
-    logging.debug(f"Embeddings: {embeddings}")
-    try:
-        vectorstore = Chroma(
-            persist_directory=CHROMA_PATH, embedding_function=embeddings
-        )
-    except KeyError as e:
-        logging.error(f"Chroma initialization failed: {e}")
-        return None
-    except Exception as e:
-        logging.error(f"Error initializing Chroma: {e}")
-        raise
+    vectorstore = Chroma(persist_directory=CHROMA_PATH, embedding_function=embeddings)
     llm = get_llm()
     if llm:
         rag_chain = RetrievalQA.from_chain_type(
@@ -53,22 +41,12 @@ def load_rag_chain():
         return None
 
 
-def ensure_event_loop():
-    try:
-        asyncio.get_running_loop()
-    except RuntimeError:
-        asyncio.set_event_loop(asyncio.new_event_loop())
-
-
-ensure_event_loop()
-
-
 def get_llm():
     if USE_OPENAI and OPENAI_API_KEY:
-        return OpenAI(openai_api_key=OPENAI_API_KEY)
+        return ChatOpenAI(openai_api_key=OPENAI_API_KEY)
     else:
         st.warning(
-            "OpenAI key not available or USE_OPENAI is False. Chatbot will not be able to answer questions."
+            "OpenAI key not available or USE_OPENAI is False. Chatbot will perform retrieval only."
         )
         return None
 
@@ -97,9 +75,9 @@ if prompt := st.chat_input():
         st.session_state.messages.append(
             {
                 "role": "assistant",
-                "content": "Chatbot is not configured to answer questions without an OpenAI API key or a local LLM.",
+                "content": "Chatbot can retrieve relevant information but cannot generate answers without an OpenAI API key.",
             }
         )
         st.chat_message("assistant").write(
-            "Chatbot is not configured to answer questions without an OpenAI API key or a local LLM."
+            "Chatbot can retrieve relevant information but cannot generate answers without an OpenAI API key."
         )

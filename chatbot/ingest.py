@@ -9,16 +9,11 @@ from langchain.document_loaders import (
 )
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
-from langchain_community.embeddings import (
-    OpenAIEmbeddings,
-    SentenceTransformerEmbeddings,
-)
+from langchain_community.embeddings import HuggingFaceEmbeddings, OpenAIEmbeddings
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-USE_OPENAI = (
-    os.getenv("USE_OPENAI", "True").lower() == "true"
-)  # Default to True if not set
+USE_OPENAI = os.getenv("USE_OPENAI", "False").lower() == "true"
 DATA_PATH = "data/support_documentation"
 CHROMA_PATH = "chroma_db"
 
@@ -55,9 +50,7 @@ def get_embeddings():
         return OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
     else:
         print("Using Sentence Transformer Embeddings (local).")
-        return SentenceTransformerEmbeddings(
-            model_name="all-MiniLM-L6-v2"
-        )  # Or another suitable model
+        return HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
 
 if __name__ == "__main__":
