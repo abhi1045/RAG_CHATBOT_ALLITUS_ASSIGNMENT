@@ -55,7 +55,7 @@ This project implements a Retrieval-Augmented Generation (RAG) chatbot trained o
 
 6.  **Run the Chatbot Interface (Locally):**
     ```bash
-    streamlit run chatbot/chatbot_interface.py
+    streamlit run chatbot_interface.py --server.fileWatcherType none
     ```
     This will open the chatbot interface in your web browser.
 
@@ -73,5 +73,3 @@ This project implements a Retrieval-Augmented Generation (RAG) chatbot trained o
 - The "I Don't know" functionality relies on the RAG pipeline's ability to not find relevant information and the language model's understanding to not hallucinate answers.
 - This version of the chatbot supports ingesting and querying information from PDF (`.pdf`), DOCX (`.docx`), and plain text (`.txt`) files. It uses ChromaDB for the vector store instead of FAISS.
 - The specific library versions in `requirements.txt` were chosen for stability as of April 14, 2025. Newer versions might be available, but compatibility is not guaranteed.
-
-streamlit run chatbot/chatbot_interface.py --server.fileWatcherType none
