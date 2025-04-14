@@ -15,23 +15,7 @@ This project implements a local Retrieval-Augmented Generation (RAG) chatbot tra
     pip install -r requirements.txt
     pip install transformers torch
     ```
-    The `requirements.txt` file specifies the following library versions for reproducibility (as of April 14, 2025):
-    ```
-    chromadb==0.6.3
-    pdfminer.six==20250327
-    streamlit==1.44.1
-    python-dotenv==1.1.0
-    openai==1.73.0
-    tiktoken==0.9.0
-    python-docx==1.1.2
-    sentence-transformers==4.0.2
-    langchain-community==0.3.21
-    langchain-chroma==0.2.2
-    langchain-huggingface==0.1.2
-    langchain-openai==0.3.12
-    watchdog==6.0.0
-    ```
-    You can install these specific versions using the command above, along with `transformers` and `torch` for the local LLM.
+    The `requirements.txt` file specifies the following library versions for reproducibility:
 
 3.  **Place Documentation:**
     * Place your customer support documentation files (both `.pdf` and `.docx`) in the `data/support_documentation` directory. Text files (`.txt`) are also supported.
