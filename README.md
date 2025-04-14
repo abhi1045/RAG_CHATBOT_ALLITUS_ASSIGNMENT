@@ -55,7 +55,7 @@ This project implements a Retrieval-Augmented Generation (RAG) chatbot trained o
 
 6.  **Run the Chatbot Interface (Locally):**
     ```bash
-    streamlit run chatbot/chatbot_interface.py --server.fileWatcherType none
+    streamlit run chatbot/chatbot_interface.py
     ```
     This will open the chatbot interface in your web browser.
 
