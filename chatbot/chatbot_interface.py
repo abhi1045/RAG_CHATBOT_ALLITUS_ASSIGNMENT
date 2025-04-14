@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 
@@ -50,9 +51,6 @@ def load_rag_chain():
         return rag_chain
     else:
         return None
-
-
-import asyncio
 
 
 def ensure_event_loop():
