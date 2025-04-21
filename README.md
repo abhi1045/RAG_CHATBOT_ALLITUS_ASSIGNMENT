@@ -1,5 +1,7 @@
 # Local Customer Support Chatbot
 
+Working on Python version 3.12.0
+
 This project implements a local Retrieval-Augmented Generation (RAG) chatbot trained on customer support documentation (PDF and DOCX files) to answer user queries. The chatbot uses Sentence Transformers for embedding the documents and a locally downloaded Large Language Model (LLM) for generating answers.
 
 ## Setup Instructions
